@@ -1,0 +1,36 @@
+
+1) 
+
+wlp3s0 IPv4
+ISP1 : 192.168.1.102
+ISP2 : 192.168.144.31
+   
+2) 
+
+ISP 1:
+Local DNS server: 127.0.0.53
+google: 172.217.19.132
+facebook: 31.13.79.35
+
+Public DNS server(Google): 8.8.8.8
+google: 142.250.77.68
+facebook: 157.240.16.35
+
+Public DNS server(Cloudfare): 1.1.1.1
+google: 142.250.192.132
+facebook: 157.240.7.35
+
+ISP 2: 
+Local DNS server 2: 127.0.0.53
+googl: 142.250.193.4
+facebook: 157.240.16.35
+
+Public DNS server(Google): 8.8.8.8
+google: 142.251.42.36
+facebook: 31.13.79.35
+
+Public DNS server(Cloudfare): 1.1.1.1
+google: 142.250.76.196
+facebook: 31.13.79.35
+
+3)
