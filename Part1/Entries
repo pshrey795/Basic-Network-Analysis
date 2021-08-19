@@ -5,7 +5,11 @@ wlp3s0 IPv4
 ISP1 : 192.168.1.102
 ISP2 : 192.168.144.31
    
-2) 
+2)
+
+The following are non-authoritative answers, means these query replies
+are sent by the authoritative DNS indirectly i.e. forwarded through
+the local DNS server 127.0.0.53
 
 ISP 1:
 Local DNS server: 127.0.0.53
@@ -32,5 +36,14 @@ facebook: 31.13.79.35
 Public DNS server(Cloudfare): 1.1.1.1
 google: 142.250.76.196
 facebook: 31.13.79.35
+
+Observation: Different DNS servers give different IP addresses for 
+the same website, which might have to do with the fact that DNS 
+servers use different servers of the same web site,and the 
+existence of multiple servers for the same website is expected from
+a site like google which receives heavy traffic. The same reason 
+can be applied to explain the observation that even the same DNS 
+server on different access networks can return different IPs for
+the same website.
 
 3)
