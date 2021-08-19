@@ -1,0 +1,8 @@
+1) DNS : 25-27 sec
+
+2) HTTP requests : 9
+
+3) First DNS query = 12.39 sec
+   Last content received = 
+
+4) Only two HTTP packets, one to and from cse.iitd.ac.in
