@@ -1,0 +1,19 @@
+This submission contains the following:
+
+1) Part 1: Networking Tools
+     - Screenshots
+     - ping.sh - Bash script for finding the max packet size and min TTL value
+     - traceroute.sh - Bash script for traceroute using ping 
+     
+2) Part 2: Packet Analysis 
+     - Screenshots
+     - Wireshark save files
+    
+3) Part 3: Traceroute Implementation
+     - traceroute.cpp - original code for traceroute implementation
+     - plot.py - python code for plotting
+     - Makefile 
+     - Output - traceroute outputs for common domains
+     - Graphs - corresponding RTT vs TTL plots
+    
+4) Report
