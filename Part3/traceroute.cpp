@@ -48,20 +48,13 @@ unsigned short calculateCheckSum(void* pkt,int length){
 	return result;
 }
 
-bool ping(int sock_desc, struct domain_info *domain, int ttl_val, double timeout){
+bool ping(int sock_desc, struct sockaddr_in *send_addr, int ttl_val){
 
     struct ICMP_packet send_pkt;
     struct ICMP_packet rcv_pkt;
 
-    //Setting timeout values
-    struct timeval rt_out;
-    rt_out.tv_sec = (int)timeout;
-    rt_out.tv_usec = (int)(1000000.0*(timeout-rt_out.tv_sec));
-    //cout<<rt_out.tv_sec<<" "<<rt_out.tv_usec<<"\n";
-
     //Socket settings
     setsockopt(sock_desc, SOL_IP, IP_TTL, &ttl_val, sizeof(ttl_val));
-    setsockopt(sock_desc, SOL_SOCKET, SO_RCVTIMEO, &rt_out, sizeof(rt_out));
 
     //Filling packet
     bzero(&send_pkt,sizeof(send_pkt));
@@ -70,17 +63,6 @@ bool ping(int sock_desc, struct domain_info *domain, int ttl_val, double timeout
     send_pkt.header.un.echo.sequence = 1;
     send_pkt.header.checksum = calculateCheckSum(&send_pkt,sizeof(send_pkt));
     //cout<<calculateCheckSum(&send_pkt,sizeof(send_pkt))<<"\n";
-
-    // for(auto i=0;i<sizeof(send_pkt.message)-1;i++){
-    //     send_pkt.message[i] = i + '0';
-    // }
-    // send_pkt.message[sizeof(send_pkt.message)-1] = 0;
-
-    //Resolve destination address
-    struct sockaddr_in *send_addr = (struct sockaddr_in*)malloc(sizeof(sockaddr_in));
-    (*send_addr).sin_family = domain->domain->h_addrtype;
-    (*send_addr).sin_port = htons (PORT_NO);
-    (*send_addr).sin_addr.s_addr = *(long *)(domain->domain->h_addr);
 
     struct sockaddr_in rcv_addr;
     socklen_t rcv_addr_len = sizeof(rcv_addr);
@@ -94,6 +76,9 @@ bool ping(int sock_desc, struct domain_info *domain, int ttl_val, double timeout
 
     auto stop = high_resolution_clock::now();
  
+    char* temp = (char *)&rcv_pkt;
+    cout<<(int)*(temp+20)<<"\n";
+
     if(rcv_success<0){
         cout<<"*\n";
     }else{
@@ -103,13 +88,7 @@ bool ping(int sock_desc, struct domain_info *domain, int ttl_val, double timeout
     auto rtt = duration_cast<microseconds>(stop-start);
     //cout<<rtt.count()<<"\n\n";
 
-    delete send_addr;
-
-    cout<<(int)rcv_pkt.header.type<<"\n";
-    // cout<<calculateCheckSum(&rcv_pkt,sizeof(rcv_pkt))<<"\n";
-    // cout<<"\n\n";
-
-    return true;
+    return *((char*)&rcv_pkt+20);
 }
 
 int main(int argc,char* argv[]){
@@ -132,17 +111,32 @@ int main(int argc,char* argv[]){
     char* ip_addr = inet_ntoa(*(struct in_addr *)domain_IP->h_addr);
     cout<<"Resolved IP address: "<<ip_addr<<"\n";
 
-    int m = 5;
+    double timeout = 3.0;
 
     struct domain_info stats(domain_name,ip_addr,domain_IP);
-    struct domain_info *ping_stats = &stats;
+    struct domain_info *domain = &stats;
+    struct sockaddr_in *send_addr = (struct sockaddr_in*)malloc(sizeof(sockaddr_in));
+    (*send_addr).sin_family = domain->domain->h_addrtype;
+    (*send_addr).sin_port = htons (PORT_NO);
+    (*send_addr).sin_addr.s_addr = *(long *)(domain->domain->h_addr);
 
-    cout<<ping_stats->ip_addr<<"\n";
+    //Setting timeout values
+    struct timeval rt_out;
+    rt_out.tv_sec = (int)timeout;
+    rt_out.tv_usec = (int)(1000000.0*(timeout-rt_out.tv_sec));
+    //cout<<rt_out.tv_sec<<" "<<rt_out.tv_usec<<"\n";
+
+    setsockopt(sockfd, SOL_SOCKET, SO_RCVTIMEO, &rt_out, sizeof(rt_out));
+
+    cout<<domain->ip_addr<<"\n";
 
     int ttl=1;
-    while(ping(sockfd,ping_stats,ttl,3.0) && ttl<18){
+    while(ping(sockfd,send_addr,ttl) && ttl<18){
         ttl++;
     }
+
+    delete send_addr;
+
     return 0;
 
 }
